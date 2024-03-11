@@ -9,13 +9,13 @@ type SelectProps = {
 const Select: React.FC<SelectProps> = ({ value, options, handleChange }) => {
   return (
     <>
-      <select value={value} onChange={handleChange}>
-        <option disabled value={""}>
+      <select value={value} className="" onChange={handleChange}>
+        <option disabled selected value={undefined}>
           --
         </option>
         {options.map((opt, i) => (
           <option key={`index-${i}`} value={opt}>
-            {opt}
+            {opt?.toUpperCase()}
           </option>
         ))}
       </select>

@@ -1,3 +1,3 @@
 export const formatNumber = (number: number) => {
-  return number.toFixed(4);
+  return number.toFixed(6);
 };

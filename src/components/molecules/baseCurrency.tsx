@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from "react";
-import Input from "../atoms/input";
+
 import Select from "../atoms/select";
 
 type BaseCurrencyProps = {
@@ -12,19 +12,22 @@ type BaseCurrencyProps = {
 
 const BaseCurrency: React.FC<BaseCurrencyProps> = ({
   options,
-  inputValue,
-  handleInputChange,
+
   handleSelectChange,
   selectValue,
 }) => {
   return (
     <>
-      <div className="group">
+      {/* <div>
+        Enter Amount:&nbsp;
         <Input
           type="number"
           value={inputValue}
           handleChange={handleInputChange}
         />
+      </div> */}
+      <div>
+        Change Base:&nbsp;
         <Select
           value={selectValue}
           handleChange={handleSelectChange}
@@ -35,4 +38,4 @@ const BaseCurrency: React.FC<BaseCurrencyProps> = ({
   );
 };
 
-export default React.memo(BaseCurrency);
+export default BaseCurrency;

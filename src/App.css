@@ -9,7 +9,6 @@
 
 .flex-container {
   display: flex;
-  flex-direction: column;
   gap: 10px;
   align-items: 'center';
   justify-content: center;
@@ -17,6 +16,13 @@
 
 .flex-row {
   display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
   gap: 10px;
   align-items: center;
 }
@@ -26,12 +32,15 @@ label {
   text-align: right;
 }
 
-select, input {
+ input {
   width: max-content;
   min-width: 100px;
   padding: 10px;
 }
-
+select{
+  min-width: 160px; 
+  padding: 10px;
+}
 .calendar{
   padding: 10px;
 }
@@ -47,6 +56,13 @@ select, input {
   height: 100vh;
 }
 
+.justify-center{
+  justify-content: center;
+}
+
+.align-center{
+  align-items: center;
+}
 .loader-svg {
   animation: rotate 2s linear infinite;
 }

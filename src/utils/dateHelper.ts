@@ -9,9 +9,9 @@ export const getMaxDate = () => {
   return currentDate;
 };
 
-export const initialDate = () => {
-  const currentDate = new Date();
-  currentDate.setDate(currentDate.getDate() - 7);
+export const decrementDate = (date: Date, num: number) => {
+  const currentDate = new Date(date);
+  currentDate.setDate(currentDate.getDate() - num);
   return currentDate;
 };
 

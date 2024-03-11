@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 interface State<T> {
   data?: T;
@@ -16,7 +17,6 @@ const useFetch = <T>(path: string): State<T> => {
 
   useEffect(() => {
     const myHeaders = new Headers();
-    myHeaders.append("apikey", apiKey);
     const requestOptions: RequestInit = {
       method: "GET",
       redirect: "follow",
@@ -33,6 +33,9 @@ const useFetch = <T>(path: string): State<T> => {
         setData(data);
       } catch (error) {
         setError(error as Error);
+
+        toast.error("Something went wrong");
+        if (error) return;
       } finally {
         setLoading(false);
       }
