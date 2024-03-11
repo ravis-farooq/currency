@@ -1,0 +1,81 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: 'center';
+  justify-content: center;
+}
+
+.flex-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+label {
+  width: max-content;
+  text-align: right;
+}
+
+select, input {
+  width: max-content;
+  min-width: 100px;
+  padding: 10px;
+}
+
+.calendar{
+  padding: 10px;
+}
+.table-style{
+   border: 2px solid #ffffff80;
+   padding: 8px 20px;
+}
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.loader-svg {
+  animation: rotate 2s linear infinite;
+}
+
+.loader-circle {
+  stroke: #3498db; /* Change the color as needed */
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -45;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -140;
+  }
+}
+
+
