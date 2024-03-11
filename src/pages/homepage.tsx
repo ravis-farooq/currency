@@ -7,16 +7,16 @@ import {
   formatDate,
   getMaxDate,
   getMinDate,
-} from "../utils/dateHelper";
+} from "../utils/datehelper";
 import Table from "../components/atoms/table";
-import BaseCurrency from "../components/molecules/baseCurrency";
+import BaseCurrency from "../components/molecules/basecurrency";
 import Select from "../components/atoms/select";
-import Loader from "../components/atoms/Loader";
+import Loader from "../components/atoms/loader";
 import {
   CurrencyApiResponse,
   CurrencyExchangeType,
-} from "../types/currencyRespType";
-import { useFetch } from "../hooks/useFetch";
+} from "../types/currencyresptype";
+import { useFetch } from "../hooks/usefetch";
 
 enum Currency {
   GBP = "gbp",
