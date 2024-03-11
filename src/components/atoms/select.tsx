@@ -4,12 +4,23 @@ type SelectProps = {
   value: string | number | readonly string[] | undefined;
   handleChange: (event: ChangeEvent<HTMLSelectElement>) => void;
   options: string[]; //for this project we only need currency names
+  disabled?: boolean;
 };
 
-const Select: React.FC<SelectProps> = ({ value, options, handleChange }) => {
+const Select: React.FC<SelectProps> = ({
+  value,
+  options,
+  handleChange,
+  disabled,
+}) => {
   return (
     <>
-      <select value={value} className="" onChange={handleChange}>
+      <select
+        disabled={disabled}
+        value={value}
+        className=""
+        onChange={handleChange}
+      >
         <option disabled selected value={undefined}>
           --
         </option>

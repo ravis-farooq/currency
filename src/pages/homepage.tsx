@@ -1,35 +1,47 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
+import toast from "react-hot-toast";
+
 import {
   decrementDate,
   formatDate,
   getMaxDate,
   getMinDate,
 } from "../utils/dateHelper";
-
 import Table from "../components/atoms/table";
 import BaseCurrency from "../components/molecules/baseCurrency";
-import { useFetch } from "../hooks/useFetch";
-
 import Select from "../components/atoms/select";
 import Loader from "../components/atoms/Loader";
-import { FetchRateType } from "../types/atomicType";
-import toast from "react-hot-toast";
-import { CurrencyExchangeType } from "../types/currencyRespType";
+import {
+  CurrencyApiResponse,
+  CurrencyExchangeType,
+} from "../types/currencyRespType";
+import { useFetch } from "../hooks/useFetch";
+
+enum Currency {
+  GBP = "gbp",
+  EUR = "eur",
+  USD = "usd",
+  JPY = "jpy",
+  CHF = "chf",
+  CAD = "cad",
+  AUD = "aud",
+  ZAR = "zar",
+}
 
 const HomePage: React.FC = () => {
   const [startDate, setStartDate] = useState(new Date());
   const [baseCurrency, setBaseCurrency] = useState("gbp");
   const [baseValue, setBaseValue] = useState(1);
-  const [symbols, setSymbols] = useState<string[]>([
-    "gbp",
-    "eur",
-    "usd",
-    "jpy",
-    "chf",
-    "cad",
-    "aud",
-    "zar",
+  const [symbols, setSymbols] = useState<Currency[]>([
+    Currency.GBP,
+    Currency.EUR,
+    Currency.USD,
+    Currency.JPY,
+    Currency.CHF,
+    Currency.CAD,
+    Currency.AUD,
+    Currency.ZAR,
   ]);
 
   const { data, loading, error } = useFetch<CurrencyExchangeType>(
@@ -62,7 +74,7 @@ const HomePage: React.FC = () => {
     data: data1,
     error: error1,
     loading: loading1,
-  } = useFetch<FetchRateType>(
+  } = useFetch<CurrencyApiResponse>(
     `/currency-api@${formatDate(startDate)}/v1/currencies/${baseCurrency}.json`
   );
 
@@ -70,7 +82,7 @@ const HomePage: React.FC = () => {
     data: data2,
     error: error2,
     loading: loading2,
-  } = useFetch<FetchRateType>(
+  } = useFetch<CurrencyApiResponse>(
     `/currency-api@${formatDate(
       decrementDate(startDate, 1)
     )}/v1/currencies/${baseCurrency}.json`
@@ -79,7 +91,7 @@ const HomePage: React.FC = () => {
     data: data3,
     error: error3,
     loading: loading3,
-  } = useFetch<FetchRateType>(
+  } = useFetch<CurrencyApiResponse>(
     `/currency-api@${formatDate(
       decrementDate(startDate, 2)
     )}/v1/currencies/${baseCurrency}.json`
@@ -88,7 +100,7 @@ const HomePage: React.FC = () => {
     data: data4,
     error: error4,
     loading: loading4,
-  } = useFetch<FetchRateType>(
+  } = useFetch<CurrencyApiResponse>(
     `/currency-api@${formatDate(
       decrementDate(startDate, 3)
     )}/v1/currencies/${baseCurrency}.json`
@@ -97,7 +109,7 @@ const HomePage: React.FC = () => {
     data: data5,
     error: error5,
     loading: loading5,
-  } = useFetch<FetchRateType>(
+  } = useFetch<CurrencyApiResponse>(
     `/currency-api@${formatDate(
       decrementDate(startDate, 4)
     )}/v1/currencies/${baseCurrency}.json`
@@ -106,7 +118,7 @@ const HomePage: React.FC = () => {
     data: data6,
     error: error6,
     loading: loading6,
-  } = useFetch<FetchRateType>(
+  } = useFetch<CurrencyApiResponse>(
     `/currency-api@${formatDate(
       decrementDate(startDate, 5)
     )}/v1/currencies/${baseCurrency}.json`
@@ -115,51 +127,58 @@ const HomePage: React.FC = () => {
     data: data7,
     error: error7,
     loading: loading7,
-  } = useFetch<FetchRateType>(
+  } = useFetch<CurrencyApiResponse>(
     `/currency-api@${formatDate(
       decrementDate(startDate, 6)
     )}/v1/currencies/${baseCurrency}.json`
   );
-  const [dataList, setDataList] = useState<Record<string, any>[]>([]);
+
+  const [dataList, setDataList] = useState<
+    {
+      date: string;
+      currency: { [x: string]: string | number; name: string }[];
+    }[]
+  >([]);
+
+  const localdataList = {
+    [formatDate(startDate)]: {
+      data: data1,
+      error: error1,
+      loading: loading1,
+    },
+    [formatDate(decrementDate(startDate, 1))]: {
+      data: data2,
+      error: error2,
+      loading: loading2,
+    },
+    [formatDate(decrementDate(startDate, 2))]: {
+      data: data3,
+      error: error3,
+      loading: loading3,
+    },
+    [formatDate(decrementDate(startDate, 3))]: {
+      data: data4,
+      error: error4,
+      loading: loading4,
+    },
+    [formatDate(decrementDate(startDate, 4))]: {
+      data: data5,
+      error: error5,
+      loading: loading5,
+    },
+    [formatDate(decrementDate(startDate, 5))]: {
+      data: data6,
+      error: error6,
+      loading: loading6,
+    },
+    [formatDate(decrementDate(startDate, 6))]: {
+      data: data7,
+      error: error7,
+      loading: loading7,
+    },
+  };
 
   useEffect(() => {
-    const localdataList = {
-      [formatDate(startDate)]: {
-        data: data1,
-        error: error1,
-        loading: loading1,
-      },
-      [formatDate(decrementDate(startDate, 1))]: {
-        data: data2,
-        error: error2,
-        loading: loading2,
-      },
-      [formatDate(decrementDate(startDate, 2))]: {
-        data: data3,
-        error: error3,
-        loading: loading3,
-      },
-      [formatDate(decrementDate(startDate, 3))]: {
-        data: data4,
-        error: error4,
-        loading: loading4,
-      },
-      [formatDate(decrementDate(startDate, 4))]: {
-        data: data5,
-        error: error5,
-        loading: loading5,
-      },
-      [formatDate(decrementDate(startDate, 5))]: {
-        data: data6,
-        error: error6,
-        loading: loading6,
-      },
-      [formatDate(decrementDate(startDate, 6))]: {
-        data: data7,
-        error: error7,
-        loading: loading7,
-      },
-    };
     if (
       !(
         loading ||
@@ -172,25 +191,32 @@ const HomePage: React.FC = () => {
         loading7
       )
     ) {
-      const dataObj: Record<string, any>[] =
-        Object.values(localdataList).some((elem) => {
-          return elem?.data !== undefined;
-        }) &&
-        Object.keys(localdataList).length > 0 &&
-        Object.entries(localdataList).some(
-          (elem) => elem?.[1].data !== undefined
-        ) &&
-        Object.entries(localdataList)?.map(([date, value]) => {
-          return {
-            date,
-            currency: Object.keys(value?.data ? value?.data[baseCurrency] : {})
-              .filter((item) => symbols.includes(item) && item !== baseCurrency)
-              .map((key) => {
-                // eslint-disable-next-line no-unsafe-optional-chaining
-                return { [key]: (value?.data![baseCurrency])[key], name: key };
-              }),
-          };
-        });
+      const dataObj = Object.values(localdataList).every(
+        (elem) => elem.data !== undefined
+      )
+        ? Object.entries(localdataList)?.map(([date, value]) => {
+            return {
+              date,
+              currency: Object.keys(
+                value?.data ? value?.data[baseCurrency] : {}
+              )
+                .filter(
+                  (item) =>
+                    symbols.includes(item as Currency) && item !== baseCurrency
+                )
+                .map((key) => {
+                  return {
+                    [key]:
+                      value?.data !== undefined
+                        ? value?.data[baseCurrency][key]
+                        : 0,
+                    name: key,
+                  };
+                }),
+            };
+          })
+        : [];
+
       setDataList(dataObj);
     }
   }, [
@@ -208,6 +234,7 @@ const HomePage: React.FC = () => {
     error5,
     error6,
     error7,
+    loading,
     loading1,
     loading2,
     loading3,
@@ -275,12 +302,12 @@ const HomePage: React.FC = () => {
           baseCurrency={baseCurrency}
           symbols={symbols}
           baseValue={baseValue}
-          data={dataList as unknown as Record<string, number>[]}
+          data={dataList}
           handleRemoveCurrency={handleRemoveCurrency}
         />
       )}
 
-      {symbols.length < 8 && (
+      {
         <div
           className="flex-col  justify-center "
           style={{
@@ -292,19 +319,26 @@ const HomePage: React.FC = () => {
           }}
         >
           <p> Add new currency in above table </p>
+          <p style={{ fontSize: "0.8rem" }}>*Only 7 can be added</p>
           <Select
+            disabled={symbols.length > 7}
             handleChange={(eV: ChangeEvent<HTMLSelectElement>) => {
-              if (eV?.target?.value) {
-                setSymbols((prev) => [...prev, eV?.target?.value]);
+              if (
+                eV.target.value &&
+                !symbols.includes(eV.target.value as Currency)
+              ) {
+                setSymbols((prev) => [...prev, eV.target.value as Currency]);
               }
             }}
             value={undefined}
-            options={Object.keys(data ? data : {})?.filter(
-              (elem) => !symbols.includes(elem) && data![elem] !== ""
+            options={Object.keys(data ? data : {}).filter(
+              (elem) =>
+                !symbols.includes(elem as Currency) &&
+                data![elem as Currency] !== ""
             )}
           />
         </div>
-      )}
+      }
     </>
   );
 };
