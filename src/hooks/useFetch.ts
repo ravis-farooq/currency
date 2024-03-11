@@ -22,19 +22,26 @@ const useFetch = <T>(path: string): State<T> => {
       redirect: "follow",
       headers: myHeaders,
     };
-
+    setError(undefined);
     setLoading(true);
 
     (async () => {
       try {
         const response = await fetch(`${apiServer}${path}`, requestOptions);
-        if (!response.ok) throw new Error(response.statusText);
+        if (!response.ok) {
+          throw new Error(
+            `Server error: ${response.status} - ${
+              response.statusText !== ""
+                ? "response.statusText"
+                : "No Data available"
+            }`
+          );
+        }
         const data = await response.json();
         setData(data);
-      } catch (error) {
+      } catch (error: any) {
         setError(error as Error);
-
-        toast.error("Something went wrong");
+        toast.error(`Error: ${error.message}`);
         if (error) return;
       } finally {
         setLoading(false);

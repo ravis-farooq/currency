@@ -219,21 +219,6 @@ const HomePage: React.FC = () => {
     symbols,
   ]);
 
-  // const filteredObject =
-  //   Object.keys(dataList).length > 0 &&
-  //   Object.entries(dataList).some((elem) => elem?.[1].data !== undefined) &&
-  //   Object.entries(dataList).map(([date, value]) => {
-  //     return {
-  //       date,
-  //       currency: Object.keys(value?.data ? value?.data![baseCurrency] : {})
-  //         .filter((item) => symbols.includes(item) && item !== baseCurrency)
-  //         .map((key) => {
-  //           // eslint-disable-next-line no-unsafe-optional-chaining
-  //           return { [key]: (value?.data![baseCurrency])[key], name: key };
-  //         }),
-  //     };
-  //   });
-
   if (
     loading ||
     loading1 ||
@@ -245,18 +230,6 @@ const HomePage: React.FC = () => {
     loading7
   ) {
     return <Loader />;
-  }
-  if (
-    error ||
-    error1 ||
-    error2 ||
-    error3 ||
-    error4 ||
-    error5 ||
-    error6 ||
-    error7
-  ) {
-    return JSON.stringify("There is something seriously wrong", null, 2);
   }
 
   return (
@@ -286,14 +259,26 @@ const HomePage: React.FC = () => {
           />
         </div>
       </div>
-
-      <Table
-        baseCurrency={baseCurrency}
-        symbols={symbols}
-        baseValue={baseValue}
-        data={dataList as unknown as Record<string, number>[]}
-        handleRemoveCurrency={handleRemoveCurrency}
-      />
+      {error ||
+      error1 ||
+      error2 ||
+      error3 ||
+      error4 ||
+      error5 ||
+      error6 ||
+      error7 ? (
+        <div style={{ padding: "1rem" }}>
+          No Data Available choose other date to proceed
+        </div>
+      ) : (
+        <Table
+          baseCurrency={baseCurrency}
+          symbols={symbols}
+          baseValue={baseValue}
+          data={dataList as unknown as Record<string, number>[]}
+          handleRemoveCurrency={handleRemoveCurrency}
+        />
+      )}
 
       {symbols.length < 8 && (
         <div
