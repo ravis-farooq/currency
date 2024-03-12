@@ -16,7 +16,8 @@ import {
   CurrencyApiResponse,
   CurrencyExchangeType,
 } from "../types/currencyresptype";
-import { useFetch } from "../hooks/usefetch";
+
+import { fetchCurrencies, fetchExchangeRate } from "../api";
 
 enum Currency {
   GBP = "gbp",
@@ -30,8 +31,19 @@ enum Currency {
 }
 
 const HomePage: React.FC = () => {
+  const [exchangeData, setExchangeData] = useState<
+    {
+      [x: number]:
+        | {
+            [x: string]: number;
+          }[]
+        | undefined;
+    }[]
+  >([]);
+  const [loader, setLoader] = useState(false);
   const [startDate, setStartDate] = useState(new Date());
-  const [baseCurrency, setBaseCurrency] = useState("gbp");
+  const [data, setData] = useState<CurrencyExchangeType>();
+  const [baseCurrency, setBaseCurrency] = useState(Currency.GBP);
   const [baseValue, setBaseValue] = useState(1);
   const [symbols, setSymbols] = useState<Currency[]>([
     Currency.GBP,
@@ -44,17 +56,15 @@ const HomePage: React.FC = () => {
     Currency.ZAR,
   ]);
 
-  const { data, loading, error } = useFetch<CurrencyExchangeType>(
-    `/currency-api@latest/v1/currencies.json`
-  );
-
   const handleInputChange = useCallback((eV: ChangeEvent<HTMLInputElement>) => {
     setBaseValue(+eV?.target?.value);
   }, []);
 
   const handleSelectChange = useCallback(
     (eV: ChangeEvent<HTMLSelectElement>) => {
-      setBaseCurrency(eV?.target?.value);
+      setBaseCurrency(eV?.target?.value as Currency);
+      setExchangeData([]);
+      // setDataList([]);
     },
     []
   );
@@ -70,192 +80,59 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const {
-    data: data1,
-    error: error1,
-    loading: loading1,
-  } = useFetch<CurrencyApiResponse>(
-    `/currency-api@${formatDate(startDate)}/v1/currencies/${baseCurrency}.json`
-  );
-
-  const {
-    data: data2,
-    error: error2,
-    loading: loading2,
-  } = useFetch<CurrencyApiResponse>(
-    `/currency-api@${formatDate(
-      decrementDate(startDate, 1)
-    )}/v1/currencies/${baseCurrency}.json`
-  );
-  const {
-    data: data3,
-    error: error3,
-    loading: loading3,
-  } = useFetch<CurrencyApiResponse>(
-    `/currency-api@${formatDate(
-      decrementDate(startDate, 2)
-    )}/v1/currencies/${baseCurrency}.json`
-  );
-  const {
-    data: data4,
-    error: error4,
-    loading: loading4,
-  } = useFetch<CurrencyApiResponse>(
-    `/currency-api@${formatDate(
-      decrementDate(startDate, 3)
-    )}/v1/currencies/${baseCurrency}.json`
-  );
-  const {
-    data: data5,
-    error: error5,
-    loading: loading5,
-  } = useFetch<CurrencyApiResponse>(
-    `/currency-api@${formatDate(
-      decrementDate(startDate, 4)
-    )}/v1/currencies/${baseCurrency}.json`
-  );
-  const {
-    data: data6,
-    error: error6,
-    loading: loading6,
-  } = useFetch<CurrencyApiResponse>(
-    `/currency-api@${formatDate(
-      decrementDate(startDate, 5)
-    )}/v1/currencies/${baseCurrency}.json`
-  );
-  const {
-    data: data7,
-    error: error7,
-    loading: loading7,
-  } = useFetch<CurrencyApiResponse>(
-    `/currency-api@${formatDate(
-      decrementDate(startDate, 6)
-    )}/v1/currencies/${baseCurrency}.json`
-  );
-
-  const [dataList, setDataList] = useState<
-    {
-      date: string;
-      currency: { [x: string]: string | number; name: string }[];
-    }[]
-  >([]);
-
-  const localdataList = {
-    [formatDate(startDate)]: {
-      data: data1,
-      error: error1,
-      loading: loading1,
-    },
-    [formatDate(decrementDate(startDate, 1))]: {
-      data: data2,
-      error: error2,
-      loading: loading2,
-    },
-    [formatDate(decrementDate(startDate, 2))]: {
-      data: data3,
-      error: error3,
-      loading: loading3,
-    },
-    [formatDate(decrementDate(startDate, 3))]: {
-      data: data4,
-      error: error4,
-      loading: loading4,
-    },
-    [formatDate(decrementDate(startDate, 4))]: {
-      data: data5,
-      error: error5,
-      loading: loading5,
-    },
-    [formatDate(decrementDate(startDate, 5))]: {
-      data: data6,
-      error: error6,
-      loading: loading6,
-    },
-    [formatDate(decrementDate(startDate, 6))]: {
-      data: data7,
-      error: error7,
-      loading: loading7,
-    },
-  };
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetchCurrencies<CurrencyExchangeType>(
+          "/currency-api@latest/v1/currencies.json"
+        );
+        console.log("SAR", resp?.data);
+        setData(resp?.data);
+      } catch (e) {
+        console.error(e, "error we face");
+      }
+    })();
+  }, []);
 
   useEffect(() => {
-    if (
-      !(
-        loading ||
-        loading1 ||
-        loading2 ||
-        loading3 ||
-        loading4 ||
-        loading5 ||
-        loading6 ||
-        loading7
-      )
-    ) {
-      const dataObj = Object.values(localdataList).every(
-        (elem) => elem.data !== undefined
-      )
-        ? Object.entries(localdataList)?.map(([date, value]) => {
-            return {
-              date,
-              currency: Object.keys(
-                value?.data ? value?.data[baseCurrency] : {}
-              )
-                .filter(
-                  (item) =>
-                    symbols.includes(item as Currency) && item !== baseCurrency
-                )
-                .map((key) => {
-                  return {
-                    [key]:
-                      value?.data !== undefined
-                        ? value?.data[baseCurrency][key]
-                        : 0,
-                    name: key,
-                  };
-                }),
-            };
-          })
-        : [];
-
-      setDataList(dataObj);
+    if (exchangeData.length > 0) {
+      setExchangeData([]);
     }
-  }, [
-    data1,
-    data2,
-    data3,
-    data4,
-    data5,
-    data6,
-    data7,
-    error1,
-    error2,
-    error3,
-    error4,
-    error5,
-    error6,
-    error7,
-    loading,
-    loading1,
-    loading2,
-    loading3,
-    loading4,
-    loading5,
-    loading6,
-    loading7,
-    startDate,
-    symbols,
-  ]);
+    const fetchDataForDate = async (dateOffset: number) => {
+      try {
+        setLoader(true);
+        const formattedDate = formatDate(decrementDate(startDate, dateOffset));
+        const path = `/currency-api@${formattedDate}/v1/currencies/${baseCurrency}.json`;
 
-  if (
-    loading ||
-    loading1 ||
-    loading2 ||
-    loading3 ||
-    loading4 ||
-    loading5 ||
-    loading6 ||
-    loading7
-  ) {
+        const resp = await fetchExchangeRate<CurrencyApiResponse>(path);
+
+        const payload = {
+          date: [resp?.data?.date ?? formattedDate],
+          data: resp?.data
+            ? Object.entries(resp?.data[baseCurrency])
+                .filter(
+                  ([key]) =>
+                    symbols.includes(key as Currency) && key !== baseCurrency
+                )
+                .map(([key, value]) => ({ [key]: value }))
+            : [],
+        };
+
+        setExchangeData((prevData) => [...prevData, payload]);
+      } catch (e) {
+        console.error(e, "error we face");
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    // Loop to fetch data for the previous 6 dates
+    for (let i = 0; i <= 6; i++) {
+      fetchDataForDate(i);
+    }
+  }, [baseCurrency, startDate, symbols]);
+
+  if (loader) {
     return <Loader />;
   }
 
@@ -268,7 +145,11 @@ const HomePage: React.FC = () => {
           <label htmlFor="date">Selected Date:</label>
           <DatePicker
             selected={startDate}
-            onChange={(date: Date) => setStartDate(date)}
+            onChange={(date: Date) => {
+              setExchangeData([]);
+              setStartDate(date);
+              // setDataList([]);
+            }}
             minDate={getMinDate()}
             maxDate={getMaxDate()}
             className="calendar"
@@ -286,26 +167,14 @@ const HomePage: React.FC = () => {
           />
         </div>
       </div>
-      {error ||
-      error1 ||
-      error2 ||
-      error3 ||
-      error4 ||
-      error5 ||
-      error6 ||
-      error7 ? (
-        <div style={{ padding: "1rem" }}>
-          No Data Available choose other date to proceed
-        </div>
-      ) : (
+      {
         <Table
-          baseCurrency={baseCurrency}
-          symbols={symbols}
           baseValue={baseValue}
-          data={dataList}
+          data={exchangeData}
           handleRemoveCurrency={handleRemoveCurrency}
+          currencyNames={data as unknown as Record<string, string>}
         />
-      )}
+      }
 
       {
         <div
@@ -321,7 +190,7 @@ const HomePage: React.FC = () => {
           <p> Add new currency in above table </p>
           <p style={{ fontSize: "0.8rem" }}>*Only 7 can be added</p>
           <Select
-            disabled={symbols.length > 7}
+            // disabled={symbols.length > 7}
             handleChange={(eV: ChangeEvent<HTMLSelectElement>) => {
               if (
                 eV.target.value &&

@@ -1,6 +1,7 @@
 import React, { ChangeEvent } from "react";
 
 import Select from "../atoms/select";
+import Input from "../atoms/input";
 
 type BaseCurrencyProps = {
   options: string[];
@@ -12,20 +13,21 @@ type BaseCurrencyProps = {
 
 const BaseCurrency: React.FC<BaseCurrencyProps> = ({
   options,
-
+  inputValue,
+  handleInputChange,
   handleSelectChange,
   selectValue,
 }) => {
   return (
     <>
-      {/* <div>
+      <div>
         Enter Amount:&nbsp;
         <Input
           type="number"
           value={inputValue}
           handleChange={handleInputChange}
         />
-      </div> */}
+      </div>
       <div>
         Change Base:&nbsp;
         <Select
