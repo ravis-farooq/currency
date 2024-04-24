@@ -190,7 +190,7 @@ const HomePage: React.FC = () => {
           <p> Add new currency in above table </p>
           <p style={{ fontSize: "0.8rem" }}>*Only 7 can be added</p>
           <Select
-            // disabled={symbols.length > 7}
+            disabled={symbols.length > 7}
             handleChange={(eV: ChangeEvent<HTMLSelectElement>) => {
               if (
                 eV.target.value &&
